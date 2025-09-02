@@ -1,0 +1,134 @@
+<% content_for :title, "#{@episode.display_name} Full Transcript | Little Bear Episodes" %>
+<% content_for :description, "Read the complete transcript for Little Bear episode #{@episode.display_name}. Search through dialogue and find your favorite moments from this classic children's show." %>
+<% content_for :head do %>
+  <meta property="og:title" content="<%= @episode.display_name %> Full Transcript | Little Bear Episodes">
+  <meta property="og:description" content="Read the complete transcript for Little Bear episode <%= @episode.display_name %>. Search through dialogue and find your favorite moments from this classic children's show.">
+  <meta property="og:type" content="article">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="<%= @episode.display_name %> Full Transcript | Little Bear Episodes">
+  <meta name="twitter:description" content="Read the complete transcript for Little Bear episode <%= @episode.display_name %>. Search through dialogue and find your favorite moments from this classic children's show.">
+  
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TVEpisode",
+    "name": "<%= @episode.display_name %>",
+    "episodeNumber": "<%= @episode.episode_number %>",
+    "seasonNumber": "<%= @episode.season %>",
+    "partOfSeries": {
+      "@type": "TVSeries",
+      "name": "Little Bear"
+    },
+    "transcript": "<%= @transcript_segments.map(&:text).join(' ') %>"
+  }
+  </script>
+<% end %>
+
+<!-- Header -->
+<header class="bg-white shadow-sm border-b border-gray-100">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4">
+    <div class="flex items-center justify-between">
+      <%= link_to root_path, class: "flex items-center space-x-2 sm:space-x-3 hover:opacity-80 transition-opacity" do %>
+        <div class="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+          <svg class="w-4 h-4 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+          </svg>
+        </div>
+        <h1 class="text-xl sm:text-2xl font-bold text-gray-900">FindThePhrase</h1>
+      <% end %>
+      <div class="hidden sm:block text-xs sm:text-sm text-gray-500">
+        Little Bear Transcript Search
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Main Content -->
+<main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
+  <!-- Breadcrumb -->
+  <nav class="mb-6">
+    <div class="flex items-center space-x-2 text-sm">
+      <%= link_to "Search", root_path, class: "text-blue-600 hover:text-blue-800 transition-colors" %>
+      <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+      </svg>
+      <span class="text-gray-600 font-medium"><%= @episode.display_name %> Transcript</span>
+    </div>
+  </nav>
+
+  <!-- Episode Header -->
+  <div class="bg-white rounded-xl shadow-md overflow-hidden mb-8">
+    <div class="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-2xl font-bold"><%= @episode.display_name %></h1>
+          <p class="text-blue-100 mt-1">Full Episode Transcript</p>
+        </div>
+        <div class="text-right">
+          <div class="bg-white/20 px-3 py-1 rounded-full text-sm">
+            <%= @transcript_segments.count %> segments
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Transcript Content -->
+  <div class="bg-white rounded-xl shadow-md overflow-hidden"<% if @target_segment_id %> data-controller="scroll-to-segment" data-scroll-to-segment-segment-id-value="<%= @target_segment_id %>"<% end %>>
+    <div class="divide-y divide-gray-100">
+      <% @transcript_segments.each do |segment| %>
+        <div id="segment-<%= segment.position %>" class="<%= 'bg-yellow-50 border-l-4 border-yellow-400' if @target_segment_id && @target_segment_id.to_i == segment.position %> px-6 py-4 hover:bg-gray-50 transition-colors">
+          <div class="flex flex-col sm:flex-row sm:items-start gap-3">
+            <span class="text-sm font-mono text-gray-500 bg-gray-100 px-3 py-1 rounded-full self-start">
+              <%= format_timestamp(segment.timestamp_from) %>
+            </span>
+            <div class="flex-1">
+              <p class="text-gray-900 leading-relaxed text-base">
+                <%= segment.text %>
+              </p>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Back to Search -->
+  <div class="mt-8 text-center">
+    <%= link_to root_path, class: "inline-flex items-center px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors" do %>
+      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+      </svg>
+      Back to Search
+    <% end %>
+  </div>
+</main>
+
+<!-- Footer -->
+<footer class="mt-12 pb-8">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm text-gray-600">
+    <p>Built with love to help children communicate through Little Bear 🐻</p>
+  </div>
+</footer>
+
+
+<style>
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+  }
+</style>

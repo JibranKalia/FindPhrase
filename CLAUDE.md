@@ -100,3 +100,4 @@ Transcript files in `/transcripts/` follow naming pattern `S##E##_cleaned.json` 
 - Large, clear search interface with immediate visual feedback
 - Context provided around matches to aid comprehension
 - Popular phrases suggested for quick discovery
+- For javascript instead of script tag use a stimulus controller

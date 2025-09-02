@@ -1,4 +1,6 @@
-<div class="px-4 py-4 hover:bg-gray-50 border-b border-gray-100 last:border-b-0 transition-all duration-200 ease-in-out hover:translate-x-1">
+<%= link_to episode_path(result[:episode].episode_id, segment: result[:match].position), 
+    class: "block px-4 py-4 hover:bg-gray-50 border-b border-gray-100 last:border-b-0 transition-all duration-200 ease-in-out hover:translate-x-1 cursor-pointer group",
+    data: { turbo_frame: "_top" } do %>
   <div class="flex flex-col sm:flex-row sm:items-start gap-3">
     <span class="text-sm font-mono text-gray-500 bg-gray-100 px-2 py-1 rounded self-start">
       <%= format_timestamp(result[:match].timestamp_from) %>
@@ -22,4 +24,4 @@
       <% end %>
     </div>
   </div>
-</div>
+<% end %>
