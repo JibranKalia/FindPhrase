@@ -1,0 +1,314 @@
+<!-- Header -->
+<header class="bg-white shadow-sm border-b border-gray-100">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+          </svg>
+        </div>
+        <h1 class="text-2xl font-bold text-gray-900">FindThePhrase</h1>
+      </div>
+      <div class="hidden lg:block text-sm text-gray-500">
+        Little Bear Transcript Search
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Main Content -->
+<main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
+  <!-- Search Section -->
+  <div class="bg-white rounded-2xl shadow-lg p-6 mb-8">
+
+    <div class="mb-4">
+      <label for="search" class="block text-sm font-medium text-gray-700 mb-2">
+        What phrase are you looking for?
+      </label>
+      <%= form_with url: search_path, method: :get, local: true, class: "search-form", data: { turbo: false } do |f| %>
+        <div class="relative">
+          <%= f.text_field :query, 
+              value: @query, 
+              placeholder: "Type what you heard (e.g., 'duck', 'hey duck')", 
+              class: "w-full px-4 py-3 pr-12 text-lg border-2 border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all",
+              autocomplete: "off",
+              autofocus: true,
+              id: "search" %>
+          
+          <%= f.button type: :submit, 
+              class: "absolute right-2 top-1/2 transform -translate-y-1/2 p-2 text-gray-400 hover:text-blue-600 transition-colors",
+              data: { disable_with: "..." } do %>
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+          <% end %>
+        </div>
+        
+        <!-- Search Options -->
+        <div class="flex items-center justify-center mt-3">
+          <label class="flex items-center gap-2 text-gray-600 text-sm cursor-pointer">
+            <%= f.check_box :exact_match, checked: @exact_match, class: "rounded text-blue-500 focus:ring-1 focus:ring-blue-500 border-gray-300" %>
+            <span>Exact phrase match</span>
+          </label>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Results Summary -->
+  <% if @query.present? && @results.any? %>
+    <div class="bg-blue-50 border border-blue-200 rounded-lg px-4 py-3 mb-6">
+      <p class="text-blue-900 font-medium">
+        Found <span class="font-bold"><%= @total_matches %> matches</span> for "<span class="highlight"><%= @query %></span>" across <%= @grouped_results.keys.count %> episodes
+      </p>
+    </div>
+  <% end %>
+
+  <!-- Results Container -->
+  <% if @query.present? && @results.any? %>
+    <div class="space-y-6">
+      <% @grouped_results.each do |episode, results| %>
+        <!-- Episode Results -->
+        <div class="bg-white rounded-xl shadow-md overflow-hidden">
+          <div class="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-4 py-3">
+            <div class="flex items-center justify-between">
+              <h3 class="font-bold text-lg"><%= episode.display_name %></h3>
+              <span class="bg-white/20 px-3 py-1 rounded-full text-sm"><%= results.count %> <%= results.count == 1 ? 'match' : 'matches' %></span>
+            </div>
+          </div>
+          
+          <div class="divide-y divide-gray-100">
+            <% results.each do |result| %>
+              <!-- Result Card -->
+              <div class="result-card px-4 py-4 hover:bg-gray-50">
+                <div class="flex flex-col sm:flex-row sm:items-start gap-3">
+                  <span class="text-sm font-mono text-gray-500 bg-gray-100 px-2 py-1 rounded self-start">
+                    <%= format_timestamp(result[:match].timestamp_from) %>
+                  </span>
+                  <div class="flex-1">
+                    <% result[:context_segments].each_with_index do |segment, idx| %>
+                      <% is_match = segment == result[:match] %>
+                      <% if is_match %>
+                        <p class="text-gray-900 font-semibold">
+                          <%= highlight_matches(segment.text, @query) %>
+                        </p>
+                      <% else %>
+                        <div class="pl-4 border-l-4 border-purple-300">
+                          <p class="text-gray-700 italic text-sm">
+                            <%= segment.text %>
+                          </p>
+                        </div>
+                      <% end %>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+      
+  <% elsif @query.present? %>
+    <!-- No Results State -->
+    <div class="text-center py-16">
+      <div class="inline-block p-10 bg-white rounded-2xl shadow-lg">
+        <div class="text-8xl mb-8 animate-pulse">🔍</div>
+        <h3 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-3">
+          No matches found
+        </h3>
+        <p class="text-gray-600 text-lg sm:text-xl mb-2">
+          We couldn't find "<strong class="text-purple-600"><%= @query %></strong>" in any episodes
+        </p>
+        <p class="text-gray-500 text-base mt-5">
+          💡 Try a different phrase or check your spelling
+        </p>
+        
+        <!-- Suggestions -->
+        <div class="mt-8">
+          <p class="text-base text-gray-500 mb-4">Try one of these:</p>
+          <div class="flex flex-wrap gap-3 justify-center">
+            <% search_suggestions.take(4).each do |phrase| %>
+              <%= link_to phrase, search_path(query: phrase), 
+                  class: "px-5 py-3 bg-purple-100 text-purple-700 rounded-full text-base hover:bg-purple-200 transition-colors" %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+      
+  <% else %>
+    <!-- Welcome/Empty State -->
+    <div class="text-center py-12">
+      <div class="inline-block p-8 sm:p-12 bg-white rounded-3xl shadow-xl max-w-3xl">
+        <div class="text-8xl mb-8">🐻</div>
+        <h2 class="text-3xl sm:text-4xl font-bold text-gray-800 mb-4">
+          Welcome to FindThePhrase!
+        </h2>
+        <p class="text-gray-600 text-lg sm:text-xl mb-10 max-w-md mx-auto leading-relaxed">
+          Search through all Little Bear episodes to find your favorite moments and phrases
+        </p>
+        
+        <!-- Quick Search Grid -->
+        <div class="space-y-5">
+          <p class="text-base text-gray-500 font-medium uppercase tracking-wide">Popular Searches</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-3xl mx-auto">
+            <% search_suggestions.each do |phrase| %>
+              <%= link_to search_path(query: phrase), 
+                  class: "group px-5 py-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl text-base sm:text-lg font-medium text-gray-700 hover:from-blue-100 hover:to-purple-100 hover:shadow-lg transition-all transform hover:scale-105",
+                  data: { turbo: false } do %>
+                <span class="group-hover:text-purple-600"><%= phrase %></span>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+        
+        <!-- Features -->
+        <div class="mt-12 flex justify-center gap-8 sm:gap-12 text-center">
+          <div class="p-4">
+            <div class="text-4xl mb-3">⚡</div>
+            <p class="text-sm sm:text-base text-gray-600">Fast Search</p>
+          </div>
+          <div class="p-4">
+            <div class="text-4xl mb-3">📝</div>
+            <p class="text-sm sm:text-base text-gray-600">Full Transcripts</p>
+          </div>
+          <div class="p-4">
+            <div class="text-4xl mb-3">🎯</div>
+            <p class="text-sm sm:text-base text-gray-600">Exact Matches</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</main>
+
+<!-- Footer -->
+<footer class="mt-12 pb-8">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm text-gray-600">
+    <p>Built with love to help children communicate through Little Bear 🐻</p>
+  </div>
+</footer>
+
+<style>
+  /* Custom highlight styles */
+  .highlight {
+    background: linear-gradient(120deg, #fbbf24 0%, #fbbf24 100%);
+    background-repeat: no-repeat;
+    background-size: 100% 40%;
+    background-position: 0 60%;
+    padding: 0 2px;
+    font-weight: 600;
+  }
+  
+  /* Smooth transitions */
+  .result-card {
+    transition: all 0.2s ease;
+  }
+  
+  .result-card:hover {
+    transform: translateX(4px);
+  }
+
+  /* Loading animation */
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+  
+  .animate-pulse-slow {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  /* Custom scrollbar */
+  .results-container::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  .results-container::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 4px;
+  }
+  
+  .results-container::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+  }
+  
+  .results-container::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+  }
+  
+  /* Enhanced Highlighting Styles */
+  mark.bg-yellow-300 {
+    background: linear-gradient(120deg, #fbbf24 0%, #fbbf24 100%);
+    background-repeat: no-repeat;
+    background-size: 100% 40%;
+    background-position: 0 60%;
+    padding: 0 2px;
+    border-radius: 3px;
+    font-weight: 600;
+    color: #374151;
+  }
+  
+  mark.bg-yellow-100 {
+    background: #fefce8;
+    padding: 1px 2px;
+    border-radius: 2px;
+  }
+  
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  /* Remove tap highlight on mobile */
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  /* Prevent iOS zoom on input focus */
+  input[type="text"],
+  input[type="search"] {
+    font-size: 16px !important;
+  }
+</style>
+
+<script>
+  // Add some interactivity
+  document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('search');
+    
+    // Auto-focus search input on desktop only
+    if (window.innerWidth > 768 && searchInput && !searchInput.value) {
+      searchInput.focus();
+    }
+    
+    // Search input animation
+    if (searchInput) {
+      searchInput.addEventListener('input', function(e) {
+        // Simulate search functionality
+        if (e.target.value.length > 0) {
+          document.querySelectorAll('.result-card').forEach(card => {
+            card.classList.add('animate-pulse-slow');
+            setTimeout(() => {
+              card.classList.remove('animate-pulse-slow');
+            }, 500);
+          });
+        }
+      });
+    }
+
+    // Add click handler for results
+    document.querySelectorAll('.result-card').forEach(card => {
+      card.addEventListener('click', function() {
+        // Future: Play audio clip
+        this.style.backgroundColor = '#e0f2fe';
+        setTimeout(() => {
+          this.style.backgroundColor = '';
+        }, 200);
+      });
+    });
+  });
+</script>
