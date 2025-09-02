@@ -37,3 +37,7 @@
 !/app/assets/builds/.keep
 
 transcripts
+
+/config/credentials/development.key
+
+/config/credentials/production.key
