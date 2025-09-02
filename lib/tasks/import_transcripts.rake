@@ -1,7 +1,7 @@
 namespace :transcripts do
   desc "Import cleaned transcript files into database"
   task import: :environment do
-    Dir.glob("transcripts/*_cleaned.json").each do |file|
+    Dir.glob("storage/transcripts/*_cleaned.json").each do |file|
       puts "Processing #{file}..."
       
       data = JSON.parse(File.read(file))
