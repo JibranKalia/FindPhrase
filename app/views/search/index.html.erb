@@ -1,16 +1,16 @@
 <!-- Header -->
 <header class="bg-white shadow-sm border-b border-gray-100">
-  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4">
     <div class="flex items-center justify-between">
-      <%= link_to root_path, class: "flex items-center space-x-3 hover:opacity-80 transition-opacity" do %>
-        <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <%= link_to root_path, class: "flex items-center space-x-2 sm:space-x-3 hover:opacity-80 transition-opacity" do %>
+        <div class="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+          <svg class="w-4 h-4 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
           </svg>
         </div>
-        <h1 class="text-2xl font-bold text-gray-900">FindThePhrase</h1>
+        <h1 class="text-xl sm:text-2xl font-bold text-gray-900">FindThePhrase</h1>
       <% end %>
-      <div class="hidden lg:block text-sm text-gray-500">
+      <div class="hidden sm:block text-xs sm:text-sm text-gray-500">
         Little Bear Transcript Search
       </div>
     </div>
@@ -26,7 +26,12 @@
       <label for="search" class="block text-sm font-medium text-gray-700 mb-2">
         What phrase are you looking for?
       </label>
-      <%= form_with url: search_path, method: :get, local: true, class: "search-form", data: { turbo: false } do |f| %>
+      <%= form_with url: search_path, method: :get, local: true, class: "search-form", 
+                    data: { 
+                      controller: "search", 
+                      search_target: "form",
+                      turbo_frame: "search_results" 
+                    } do |f| %>
         <div class="relative">
           <%= f.text_field :query, 
               value: @query, 
@@ -34,7 +39,8 @@
               class: "w-full px-4 py-3 pr-12 text-lg border-2 border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all",
               autocomplete: "off",
               autofocus: true,
-              id: "search" %>
+              id: "search",
+              data: { action: "input->search#search" } %>
           
           <%= f.button type: :submit, 
               class: "absolute right-2 top-1/2 transform -translate-y-1/2 p-2 text-gray-400 hover:text-blue-600 transition-colors",
@@ -56,17 +62,18 @@
     </div>
   </div>
 
-  <!-- Results Summary -->
-  <% if @query.present? && @results.any? %>
-    <div class="bg-blue-50 border border-blue-200 rounded-lg px-4 py-3 mb-6">
-      <p class="text-blue-900 font-medium">
-        Found <span class="font-bold"><%= @total_matches %> matches</span> for "<span class="highlight"><%= @query %></span>" across <%= @grouped_results.keys.count %> episodes
-      </p>
-    </div>
-  <% end %>
+  <%= turbo_frame_tag "search_results" do %>
+    <!-- Results Summary -->
+    <% if @query.present? && @results.any? %>
+      <div class="bg-blue-50 border border-blue-200 rounded-lg px-4 py-3 mb-6">
+        <p class="text-blue-900 font-medium">
+          Found <span class="font-bold"><%= @total_matches %> matches</span> for "<span class="highlight"><%= @query %></span>" across <%= @grouped_results.keys.count %> episodes
+        </p>
+      </div>
+    <% end %>
 
-  <!-- Results Container -->
-  <% if @query.present? && @results.any? %>
+    <!-- Results Container -->
+    <% if @query.present? && @results.any? %>
     <div class="space-y-6">
       <% @grouped_results.each do |episode, results| %>
         <!-- Episode Results -->
@@ -140,23 +147,23 @@
       
   <% else %>
     <!-- Welcome/Empty State -->
-    <div class="text-center py-12">
-      <div class="inline-block p-8 sm:p-12 bg-white rounded-3xl shadow-xl max-w-3xl">
-        <div class="text-8xl mb-8">🐻</div>
-        <h2 class="text-3xl sm:text-4xl font-bold text-gray-800 mb-4">
+    <div class="text-center py-6 sm:py-12">
+      <div class="inline-block p-4 sm:p-8 lg:p-12 bg-white rounded-2xl sm:rounded-3xl shadow-xl max-w-3xl mx-4">
+        <div class="text-6xl sm:text-8xl mb-6 sm:mb-8">🐻</div>
+        <h2 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-800 mb-3 sm:mb-4">
           Welcome to FindThePhrase!
         </h2>
-        <p class="text-gray-600 text-lg sm:text-xl mb-10 max-w-md mx-auto leading-relaxed">
+        <p class="text-gray-600 text-base sm:text-lg lg:text-xl mb-6 sm:mb-10 max-w-md mx-auto leading-relaxed px-2">
           Search through all Little Bear episodes to find your favorite moments and phrases
         </p>
         
         <!-- Quick Search Grid -->
-        <div class="space-y-5">
-          <p class="text-base text-gray-500 font-medium uppercase tracking-wide">Popular Searches</p>
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-3xl mx-auto">
+        <div class="space-y-4 sm:space-y-5">
+          <p class="text-sm sm:text-base text-gray-500 font-medium uppercase tracking-wide">Popular Searches</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 max-w-3xl mx-auto">
             <% search_suggestions.each do |phrase| %>
               <%= link_to search_path(query: phrase), 
-                  class: "group px-5 py-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl text-base sm:text-lg font-medium text-gray-700 hover:from-blue-100 hover:to-purple-100 hover:shadow-lg transition-all transform hover:scale-105",
+                  class: "group px-4 sm:px-5 py-3 sm:py-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg sm:rounded-xl text-sm sm:text-base lg:text-lg font-medium text-gray-700 hover:from-blue-100 hover:to-purple-100 hover:shadow-lg transition-all transform hover:scale-105",
                   data: { turbo: false } do %>
                 <span class="group-hover:text-purple-600"><%= phrase %></span>
               <% end %>
@@ -165,22 +172,23 @@
         </div>
         
         <!-- Features -->
-        <div class="mt-12 flex justify-center gap-8 sm:gap-12 text-center">
-          <div class="p-4">
-            <div class="text-4xl mb-3">⚡</div>
-            <p class="text-sm sm:text-base text-gray-600">Fast Search</p>
+        <div class="mt-8 sm:mt-12 flex justify-center gap-4 sm:gap-8 lg:gap-12 text-center">
+          <div class="p-2 sm:p-4">
+            <div class="text-3xl sm:text-4xl mb-2 sm:mb-3">⚡</div>
+            <p class="text-xs sm:text-sm lg:text-base text-gray-600">Fast Search</p>
           </div>
-          <div class="p-4">
-            <div class="text-4xl mb-3">📝</div>
-            <p class="text-sm sm:text-base text-gray-600">Full Transcripts</p>
+          <div class="p-2 sm:p-4">
+            <div class="text-3xl sm:text-4xl mb-2 sm:mb-3">📝</div>
+            <p class="text-xs sm:text-sm lg:text-base text-gray-600">Full Transcripts</p>
           </div>
-          <div class="p-4">
-            <div class="text-4xl mb-3">🎯</div>
-            <p class="text-sm sm:text-base text-gray-600">Exact Matches</p>
+          <div class="p-2 sm:p-4">
+            <div class="text-3xl sm:text-4xl mb-2 sm:mb-3">🎯</div>
+            <p class="text-xs sm:text-sm lg:text-base text-gray-600">Exact Matches</p>
           </div>
         </div>
       </div>
     </div>
+  <% end %>
   <% end %>
 </main>
 
