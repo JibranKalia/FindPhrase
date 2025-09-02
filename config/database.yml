@@ -85,7 +85,7 @@ production:
     username: find_phrase
     port: <%= ENV.fetch("DB_PORT", 5432) %>
     host: <%= ENV.fetch("DB_HOST", "localhost") %>
-    password: <%= ENV["FIND_PHRASE_DATABASE_PASSWORD"] %>
+    password: <%= ENV["POSTGRES_PASSWORD"] %>
   cache:
     <<: *primary_production
     database: find_phrase_production_cache
