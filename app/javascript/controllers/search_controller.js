@@ -2,7 +2,7 @@ import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
   static targets = ["form"]
-  static values = { debounce: { type: Number, default: 300 } }
+  static values = { debounce: { type: Number, default: 100 } }
 
   connect() {
     this.timeout = null
