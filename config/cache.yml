@@ -12,5 +12,5 @@ test:
   <<: *default
 
 production:
-  database: DOMAIN_SPP_MIGRATION_DEV
+  database: cache
   <<: *default
