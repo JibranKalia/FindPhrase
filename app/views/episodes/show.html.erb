@@ -78,15 +78,15 @@
     <div class="divide-y divide-gray-100">
       <% @transcript_segments.each do |segment| %>
         <div id="segment-<%= segment.position %>" class="<%= 'bg-yellow-50 border-l-4 border-yellow-400' if @target_segment_id && @target_segment_id.to_i == segment.position %> px-6 py-4 hover:bg-gray-50 transition-colors">
-          <div class="flex flex-col sm:flex-row sm:items-start gap-3">
-            <span class="text-sm font-mono text-gray-500 bg-gray-100 px-3 py-1 rounded-full self-start">
-              <%= format_timestamp(segment.timestamp_from) %>
-            </span>
+          <div class="flex items-start gap-3">
             <div class="flex-1">
               <p class="text-gray-900 leading-relaxed text-base">
                 <%= segment.text %>
               </p>
             </div>
+            <span class="text-sm font-mono text-gray-500 bg-gray-100 px-3 py-1 rounded-full shrink-0">
+              <%= format_timestamp(segment.timestamp_from) %>
+            </span>
           </div>
         </div>
       <% end %>

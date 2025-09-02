@@ -51,10 +51,7 @@
                 <%= link_to episode_path(episode.episode_id, segment: segment.position), 
                     class: "block px-4 py-4 hover:bg-gray-50 border-b border-gray-100 last:border-b-0 transition-all duration-200 ease-in-out hover:translate-x-1 cursor-pointer group",
                     data: { turbo_frame: "_top" } do %>
-                  <div class="flex flex-col sm:flex-row sm:items-start gap-3">
-                    <span class="text-sm font-mono text-gray-500 bg-gray-100 px-2 py-1 rounded self-start">
-                      <%= format_timestamp(segment.timestamp_from) %>
-                    </span>
+                  <div class="flex items-start gap-3">
                     <div class="flex-1">
                       <div class="border-l-4 border-red-500 pl-3 py-1 bg-red-50 relative">
                         <p class="text-gray-900 font-medium pr-8">
@@ -76,6 +73,9 @@
                         Favorited <%= time_ago_in_words(favorite.created_at) %> ago
                       </p>
                     </div>
+                    <span class="text-sm font-mono text-gray-500 bg-gray-100 px-2 py-1 rounded shrink-0">
+                      <%= format_timestamp(segment.timestamp_from) %>
+                    </span>
                   </div>
                 <% end %>
               </div>
