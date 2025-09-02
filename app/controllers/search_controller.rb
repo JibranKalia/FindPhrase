@@ -9,18 +9,19 @@ class SearchController < ApplicationController
     @total_matches = 0
 
     if @query.present?
+      
       # Use exact phrase search or regular search
       if @exact_match
         # Search for exact phrase
         matches = TranscriptSegment
           .where("LOWER(text) LIKE ?", "%#{@query.downcase}%")
-          .includes(:episode)
+          .includes(:episode, :favorite_segment)
           .limit(100)
       else
         # Use full-text search
         matches = TranscriptSegment
           .search_text(@query)
-          .includes(:episode)
+          .includes(:episode, :favorite_segment)
           .limit(100)
       end
 
@@ -32,6 +33,7 @@ class SearchController < ApplicationController
         # Get context (2 segments before and after)
         context_segments = episode.transcript_segments
           .where(position: (match.position - 2)..(match.position + 2))
+          .includes(:favorite_segment)
           .ordered
 
         {

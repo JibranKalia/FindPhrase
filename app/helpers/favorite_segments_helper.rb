@@ -1,0 +1,2 @@
+module FavoriteSegmentsHelper
+end

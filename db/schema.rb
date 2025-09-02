@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_01_213206) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_02_173535) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -22,6 +22,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_01_213206) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["episode_id"], name: "index_episodes_on_episode_id", unique: true
+  end
+
+  create_table "favorite_segments", force: :cascade do |t|
+    t.bigint "transcript_segment_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["transcript_segment_id"], name: "index_favorite_segments_on_segment_id_unique", unique: true
+    t.index ["transcript_segment_id"], name: "index_favorite_segments_on_transcript_segment_id"
   end
 
   create_table "transcript_segments", force: :cascade do |t|
@@ -37,5 +45,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_01_213206) do
     t.index ["text"], name: "idx_segments_text_trgm", opclass: :gin_trgm_ops, using: :gin
   end
 
+  add_foreign_key "favorite_segments", "transcript_segments"
   add_foreign_key "transcript_segments", "episodes"
 end

@@ -1,5 +1,6 @@
 class TranscriptSegment < ApplicationRecord
   belongs_to :episode
+  has_one :favorite_segment, dependent: :destroy
 
   include PgSearch::Model
 
@@ -20,5 +21,9 @@ class TranscriptSegment < ApplicationRecord
 
   def display_location
     "#{episode.episode_id} at #{timestamp_from}"
+  end
+  
+  def favorited?
+    favorite_segment.present?
   end
 end

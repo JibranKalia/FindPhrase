@@ -3,6 +3,9 @@ Rails.application.routes.draw do
   root "search#index"
   get "search", to: "search#index"
   get "episodes/:id", to: "episodes#show", as: :episode
+  
+  # Favorites
+  resources :favorite_segments, only: [:index, :create, :destroy]
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.
