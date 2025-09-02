@@ -23,13 +23,10 @@ registry:
 env:
   secret:
     - RAILS_MASTER_KEY
-    - POSTGRES_PASSWORD
+    - FIND_PHRASE_DATABASE_PASSWORD
   clear:
     SOLID_QUEUE_IN_PUMA: true
-    DB_HOST: 5.78.67.11
-    DB_NAME: findthephrase
-    DB_USERNAME: findthephrase
-    DB_PORT: 5433
+    DB_HOST: FindPhrase-postgres
     WEB_CONCURRENCY: 2
     RAILS_LOG_LEVEL: info
     RAILS_SERVE_STATIC_FILES: true
@@ -56,10 +53,10 @@ accessories:
     port: 5433:5432
     env:
       secret:
-        - POSTGRES_PASSWORD
+        - FIND_PHRASE_DATABASE_PASSWORD
       clear:
-        POSTGRES_USER: findthephrase
-        POSTGRES_DB: findthephrase
+        POSTGRES_USER: find_phrase
+        POSTGRES_DB: find_phrase_production
     volumes:
       - /mnt/HC_Volume_103056667/find-phrase-postgres-data:/var/lib/postgresql/data
 
