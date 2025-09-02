@@ -6,23 +6,11 @@ module SearchHelper
     words = query.split(/\s+/)
     highlighted_text = text
 
-    # Highlight full phrase first (in bright yellow)
-    if query.include?(" ")
-      highlighted_text = highlighted_text.gsub(/(#{Regexp.escape(query)})/i) do |match|
-        content_tag(:mark, match, class: "bg-yellow-300 font-bold px-1 rounded shadow-sm")
-      end
-    end
-
-    # Then highlight individual words (in lighter yellow)
+    # Highlight matching words with blue
     words.each do |word|
       next if word.length < 2 # Skip very short words
       highlighted_text = highlighted_text.gsub(/(#{Regexp.escape(word)})/i) do |match|
-        # Don't re-highlight if already in a mark tag
-        if match.start_with?("<mark") || match.end_with?("</mark>")
-          match
-        else
-          content_tag(:mark, match, class: "bg-yellow-100 px-0.5 rounded")
-        end
+        content_tag(:mark, match, class: "bg-blue-200 font-medium px-1 rounded")
       end
     end
 

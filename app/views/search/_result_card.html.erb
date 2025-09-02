@@ -1,0 +1,25 @@
+<div class="px-4 py-4 hover:bg-gray-50 border-b border-gray-100 last:border-b-0 transition-all duration-200 ease-in-out hover:translate-x-1">
+  <div class="flex flex-col sm:flex-row sm:items-start gap-3">
+    <span class="text-sm font-mono text-gray-500 bg-gray-100 px-2 py-1 rounded self-start">
+      <%= format_timestamp(result[:match].timestamp_from) %>
+    </span>
+    <div class="flex-1 space-y-1">
+      <% result[:context_segments].each do |segment| %>
+        <% is_match = segment.id == result[:match].id %>
+        <% if is_match %>
+          <div class="border-l-4 border-blue-500 pl-3 py-1 bg-blue-50">
+            <p class="text-gray-900 font-medium">
+              <%= highlight_matches(segment.text, @query) %>
+            </p>
+          </div>
+        <% else %>
+          <div class="pl-3 border-l-2 border-gray-200">
+            <p class="text-gray-600 text-sm leading-relaxed">
+              <%= segment.text %>
+            </p>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</div>

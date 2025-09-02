@@ -29,9 +29,9 @@ class SearchController < ApplicationController
       # Get context segments (before and after each match)
       @results = matches.map do |match|
         episode = match.episode
-        # Get more context (3 segments before and after)
+        # Get context (2 segments before and after)
         context_segments = episode.transcript_segments
-          .where(position: (match.position - 3)..(match.position + 3))
+          .where(position: (match.position - 2)..(match.position + 2))
           .ordered
 
         {
