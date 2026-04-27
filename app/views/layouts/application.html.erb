@@ -1,36 +1,32 @@
 <!DOCTYPE html>
-<html class="scroll-smooth">
+<html lang="en" class="scroll-smooth">
   <head>
-    <title><%= content_for(:title) || "Little Bear Phrase Search" %></title>
-    <meta name="description" content="<%= content_for(:description) || 'Search through Little Bear episode transcripts to find phrases and understand context. Perfect for parents of children with gestalt language processing and apraxia.' %>">
+    <title><%= content_for(:title) || "FindThePhrase — A Reader's Index of Little Bear" %></title>
+    <meta name="description" content="<%= content_for(:description) || 'A quiet, thoughtfully made search index of every Little Bear episode — built for parents of children with gestalt language processing and apraxia.' %>">
     <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="theme-color" content="#f0f9ff">
+    <meta name="theme-color" content="#f4ecda">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
     <%= yield :head %>
 
-    <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
-    <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
-
     <link rel="icon" href="/favicon.ico" sizes="any">
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <link rel="icon" href="/favicon-96x96.png" type="image/png" sizes="96x96">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-    
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..900,0..100,0..1&family=Newsreader:opsz,wght,ital@6..72,200..800,0;6..72,200..800,1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
-    <%# Includes all stylesheet files in app/assets/stylesheets %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
   </head>
 
-  <body class="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50" style="font-family: 'Inter', system-ui, -apple-system, sans-serif;">
+  <body class="paper min-h-screen text-ink antialiased">
     <%= yield %>
   </body>
 </html>

@@ -1,0 +1,36 @@
+<%= form_with url: search_path, method: :get, local: true, class: "search-form",
+              data: {
+                controller: "search",
+                search_target: "form",
+                turbo_frame: "search_results"
+              } do |f| %>
+  <label for="search" class="sr-only">Search the index</label>
+
+  <div class="relative">
+    <%# Decorative left ornament — small magnifier %>
+    <span class="pointer-events-none absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-ink-faint" aria-hidden="true">
+      <svg class="w-4 h-4 sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+        <circle cx="11" cy="11" r="6.5"/>
+        <path d="M21 21 L 16 16" stroke-linecap="round"/>
+      </svg>
+    </span>
+
+    <%= f.text_field :query,
+        value: @query,
+        placeholder: "a phrase, a half-heard line, or a beloved word…",
+        class: "w-full pl-10 sm:pl-12 pr-24 sm:pr-28 py-3 sm:py-3.5 bg-paper-card paper-card border-b-2 border-ink rounded-none font-display text-lg sm:text-xl text-ink placeholder:text-ink-faint placeholder:italic placeholder:font-body-italic placeholder:text-base focus:outline-none focus:border-vermilion transition-colors",
+        autocomplete: "off",
+        autofocus: true,
+        id: "search",
+        data: { action: "input->search#search" } %>
+
+    <%= f.button type: :submit,
+        class: "absolute right-1.5 sm:right-2 top-1/2 -translate-y-1/2 inline-flex items-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 bg-ink text-paper hover:bg-vermilion-deep transition-colors font-display-text text-xs sm:text-sm tracking-wide rounded-full",
+        data: { disable_with: "..." } do %>
+      <span>Look up</span>
+      <svg class="w-3 h-3" viewBox="0 0 12 12" fill="none">
+        <path d="M2 6 H 10 M 7 3 L 10 6 L 7 9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    <% end %>
+  </div>
+<% end %>

@@ -10,7 +10,7 @@ module SearchHelper
     words.each do |word|
       next if word.length < 2 # Skip very short words
       highlighted_text = highlighted_text.gsub(/(#{Regexp.escape(word)})/i) do |match|
-        content_tag(:mark, match, class: "bg-blue-200 font-medium px-1 rounded")
+        content_tag(:mark, match, class: "highlight")
       end
     end
 

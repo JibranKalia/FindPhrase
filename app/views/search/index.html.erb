@@ -1,179 +1,148 @@
-<!-- Header -->
-<header class="bg-white shadow-sm border-b border-gray-100">
-  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4">
-    <div class="flex items-center justify-between">
-      <%= link_to root_path, class: "flex items-center space-x-2 sm:space-x-3 hover:opacity-80 transition-opacity" do %>
-        <div class="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-          <svg class="w-4 h-4 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
-          </svg>
+<% content_for :title, "FindThePhrase — A Reader's Index of Little Bear" %>
+
+<%= render "shared/header" %>
+
+<main class="max-w-6xl mx-auto px-5 sm:px-8 lg:px-12">
+
+  <%# ─────────── HERO + SEARCH (compact, search above the fold) ─────────── %>
+  <% if @query.blank? %>
+    <section class="pt-6 sm:pt-8 pb-10">
+      <div class="grid grid-cols-12 gap-x-6 items-center">
+        <div class="col-span-12 sm:col-span-9 lg:col-span-10">
+          <p class="ink-rise font-mono text-[10px] tracking-[0.22em] uppercase text-vermilion mb-2">
+            Vol. I &nbsp;·&nbsp; <%= Episode.count %> episodes &nbsp;·&nbsp; Indexed for parents
+          </p>
+          <h1 class="ink-rise ink-rise-delay-1 font-display tracking-[-0.03em] leading-[0.95] text-3xl sm:text-4xl lg:text-5xl text-ink">
+            Find the
+            <span class="italic text-vermilion">phrase</span>
+            your child remembers.
+          </h1>
+          <p class="ink-rise ink-rise-delay-2 mt-2 max-w-2xl text-base text-ink-soft leading-snug">
+            Every episode of <em>Little Bear</em>, transcribed and indexed — so a half-heard line finds its scene.
+          </p>
         </div>
-        <h1 class="text-xl sm:text-2xl font-bold text-gray-900">FindThePhrase</h1>
-      <% end %>
-      <div class="flex items-center gap-4">
-        <%= link_to favorite_segments_path, class: "flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:text-red-500 transition-colors rounded-lg hover:bg-gray-50 cursor-pointer" do %>
-          <svg class="w-4 h-4 hidden sm:inline" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+
+        <div class="hidden sm:flex col-span-3 lg:col-span-2 justify-end ink-rise ink-rise-delay-3">
+          <%# Compact bear glyph %>
+          <svg viewBox="0 0 100 100" class="w-16 h-16 lg:w-20 lg:h-20" fill="none" aria-hidden="true">
+            <ellipse cx="50" cy="58" rx="28" ry="26" fill="#c84b31"/>
+            <circle cx="32" cy="34" r="9" fill="#c84b31"/>
+            <circle cx="68" cy="34" r="9" fill="#c84b31"/>
+            <circle cx="32" cy="34" r="4" fill="#1f1a14"/>
+            <circle cx="68" cy="34" r="4" fill="#1f1a14"/>
+            <circle cx="42" cy="52" r="2.4" fill="#1f1a14"/>
+            <circle cx="58" cy="52" r="2.4" fill="#1f1a14"/>
+            <ellipse cx="50" cy="62" rx="3.6" ry="2.6" fill="#1f1a14"/>
+            <path d="M50 64 V 70 M 46 70 Q 50 73, 54 70" stroke="#1f1a14" stroke-width="1.4" stroke-linecap="round" fill="none"/>
           </svg>
-          <span class="inline">Favorites</span>
-        <% end %>
-        <div class="hidden sm:block text-xs sm:text-sm text-gray-500">
-          Little Bear Transcript Search
         </div>
       </div>
-    </div>
-  </div>
-</header>
 
-<!-- Main Content -->
-<div class="max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 py-8 min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
-  <!-- Search Section -->
-  <div class="bg-white rounded-2xl shadow-lg p-6 mb-8">
+      <%# ─────────── SEARCH FIELD ─────────── %>
+      <div class="ink-rise ink-rise-delay-4 mt-6">
+        <%= render "search_form", query: @query %>
+      </div>
 
-    <div class="mb-4">
-      <label for="search" class="block text-sm font-medium text-gray-700 mb-2">
-        What phrase are you looking for?
-      </label>
-      <%= form_with url: search_path, method: :get, local: true, class: "search-form", 
-                    data: { 
-                      controller: "search", 
-                      search_target: "form",
-                      turbo_frame: "search_results" 
-                    } do |f| %>
-        <div class="relative">
-          <%= f.text_field :query, 
-              value: @query, 
-              placeholder: "Type what you heard (e.g., 'duck', 'hey duck')", 
-              class: "w-full px-4 py-3 pr-12 text-lg border-2 border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all",
-              autocomplete: "off",
-              autofocus: true,
-              id: "search",
-              data: { action: "input->search#search" } %>
-          
-          <%= f.button type: :submit, 
-              class: "absolute right-2 top-1/2 transform -translate-y-1/2 p-2 text-gray-400 hover:text-blue-600 transition-colors",
-              data: { disable_with: "..." } do %>
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-            </svg>
+      <%# ─────────── POPULAR PHRASES ─────────── %>
+      <div class="ink-rise ink-rise-delay-5 mt-10">
+        <div class="flex items-baseline gap-3 mb-4">
+          <span class="font-mono text-[10px] tracking-[0.22em] uppercase text-vermilion">№1</span>
+          <h2 class="font-display text-xl sm:text-2xl text-ink">Phrases parents look up most</h2>
+        </div>
+
+        <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-1.5">
+          <% search_suggestions.each_with_index do |phrase, i| %>
+            <li class="flex items-baseline gap-3 border-t border-paper-edge/70 pt-2 group">
+              <span class="font-mono text-[10px] text-ink-faint w-5 shrink-0"><%= sprintf("%02d", i + 1) %></span>
+              <%= link_to search_path(query: phrase),
+                  class: "flex-1 font-display text-base sm:text-lg text-ink hover:text-vermilion transition-colors",
+                  data: { turbo: false } do %>
+                <span class="italic">"<%= phrase %>"</span>
+              <% end %>
+              <svg class="w-3 h-3 text-ink-faint group-hover:text-vermilion shrink-0 mt-1 transition-all group-hover:translate-x-1" viewBox="0 0 12 12" fill="none">
+                <path d="M2 6 H 10 M 7 3 L 10 6 L 7 9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    </section>
+
+  <% else %>
+    <%# ─────────── RESULTS LAYOUT ─────────── %>
+    <section class="pt-10 sm:pt-12 pb-12">
+      <%= render "search_form", query: @query %>
+    </section>
+
+    <%= turbo_frame_tag "search_results" do %>
+      <% if @results.any? %>
+        <div class="mb-10 flex items-baseline justify-between gap-4 flex-wrap">
+          <p class="font-display text-2xl sm:text-3xl text-ink leading-snug">
+            <span class="font-body-italic text-ink-soft">Found</span>
+            <span class="text-vermilion"><%= @total_matches %></span>
+            <span class="font-body-italic text-ink-soft">passages of</span>
+            "<span class="italic"><%= @query %></span>"
+            <span class="font-body-italic text-ink-soft">across</span>
+            <%= @grouped_results.keys.count %>
+            <span class="font-body-italic text-ink-soft">episode<%= 's' if @grouped_results.keys.count != 1 %>.</span>
+          </p>
+        </div>
+
+        <div class="space-y-12 sm:space-y-16">
+          <% @grouped_results.each_with_index do |(episode, results), idx| %>
+            <article>
+              <%# Chapter header — folio style %>
+              <header class="flex items-end justify-between border-b border-ink/30 pb-3 mb-1">
+                <div class="flex items-baseline gap-4">
+                  <span class="font-mono text-xs text-ink-faint tracking-[0.18em] uppercase">Ch. <%= sprintf("%02d", idx + 1) %></span>
+                  <h2 class="font-display text-3xl sm:text-4xl text-ink leading-none">
+                    <%= episode.display_name %>
+                  </h2>
+                </div>
+                <span class="font-mono text-xs text-ink-faint hidden sm:inline">
+                  <%= results.count %> <%= results.count == 1 ? 'match' : 'matches' %>
+                </span>
+              </header>
+              <div class="border-b border-paper-edge mb-2"></div>
+
+              <ul>
+                <% results.each do |result| %>
+                  <%= render 'result_card', result: result %>
+                <% end %>
+              </ul>
+            </article>
           <% end %>
         </div>
-      <% end %>
-    </div>
-  </div>
 
-  <%= turbo_frame_tag "search_results" do %>
-    <!-- Results Summary -->
-    <% if @query.present? && @results.any? %>
-      <div class="bg-blue-50 border border-blue-200 rounded-lg px-4 py-3 mb-6">
-        <p class="text-blue-900 font-medium">
-          Found <span class="font-bold"><%= @total_matches %> matches</span> for "<span class="bg-blue-200 font-medium px-1 rounded"><%= @query %></span>" across <%= @grouped_results.keys.count %> episodes
-        </p>
-      </div>
+      <% else %>
+        <%# ─────────── NO RESULTS ─────────── %>
+        <div class="py-16 sm:py-24 max-w-2xl">
+          <p class="font-mono text-[11px] tracking-[0.22em] uppercase text-vermilion mb-4">Nothing in the index</p>
+          <h2 class="font-display text-4xl sm:text-5xl text-ink leading-[0.95]">
+            We couldn't find <span class="italic">"<%= @query %>"</span>
+            <span class="text-ink-soft">in any episode.</span>
+          </h2>
+          <p class="mt-6 text-lg text-ink-soft leading-relaxed">
+            Try a slightly different spelling, or one of these well-loved lines —
+            children rephrase as they go.
+          </p>
+
+          <ul class="mt-8 space-y-3">
+            <% search_suggestions.take(5).each_with_index do |phrase, i| %>
+              <li class="flex items-baseline gap-4 border-t border-paper-edge pt-3">
+                <span class="font-mono text-xs text-ink-faint w-6"><%= sprintf("%02d", i + 1) %></span>
+                <%= link_to search_path(query: phrase),
+                    class: "font-display text-xl text-ink hover:text-vermilion transition-colors italic",
+                    data: { turbo: false } do %>
+                  "<%= phrase %>"
+                <% end %>
+              </li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
     <% end %>
-
-    <!-- Results Container -->
-    <% if @query.present? && @results.any? %>
-    <div class="space-y-6">
-      <% @grouped_results.each do |episode, results| %>
-        <!-- Episode Results -->
-        <div class="bg-white rounded-xl shadow-md overflow-hidden">
-          <div class="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-4 py-3">
-            <div class="flex items-center justify-between">
-              <h3 class="font-bold text-lg"><%= episode.display_name %></h3>
-              <span class="bg-white/20 px-3 py-1 rounded-full text-sm"><%= results.count %> <%= results.count == 1 ? 'match' : 'matches' %></span>
-            </div>
-          </div>
-          
-          <div class="divide-y-0">
-            <% results.each do |result| %>
-              <%= render 'result_card', result: result %>
-            <% end %>
-          </div>
-        </div>
-      <% end %>
-    </div>
-      
-  <% elsif @query.present? %>
-    <!-- No Results State -->
-    <div class="text-center py-16">
-      <div class="inline-block p-10 bg-white rounded-2xl shadow-lg">
-        <div class="text-8xl mb-8 animate-pulse">🔍</div>
-        <h3 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-3">
-          No matches found
-        </h3>
-        <p class="text-gray-600 text-lg sm:text-xl mb-2">
-          We couldn't find "<strong class="text-purple-600"><%= @query %></strong>" in any episodes
-        </p>
-        <p class="text-gray-500 text-base mt-5">
-          💡 Try a different phrase or check your spelling
-        </p>
-        
-        <!-- Suggestions -->
-        <div class="mt-8">
-          <p class="text-base text-gray-500 mb-4">Try one of these:</p>
-          <div class="flex flex-wrap gap-3 justify-center">
-            <% search_suggestions.take(4).each do |phrase| %>
-              <%= link_to phrase, search_path(query: phrase), 
-                  class: "px-5 py-3 bg-purple-100 text-purple-700 rounded-full text-base hover:bg-purple-200 transition-colors" %>
-            <% end %>
-          </div>
-        </div>
-      </div>
-    </div>
-      
-  <% else %>
-    <!-- Welcome/Empty State -->
-    <div class="text-center py-6 sm:py-12">
-      <div class="inline-block p-4 sm:p-8 lg:p-12 bg-white rounded-2xl sm:rounded-3xl shadow-xl max-w-3xl mx-4">
-        <div class="text-6xl sm:text-8xl mb-6 sm:mb-8">🐻</div>
-        <h2 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-800 mb-3 sm:mb-4">
-          Welcome to FindThePhrase!
-        </h2>
-        <p class="text-gray-600 text-base sm:text-lg lg:text-xl mb-6 sm:mb-10 max-w-md mx-auto leading-relaxed px-2">
-          Search through all Little Bear episodes to find your favorite moments and phrases
-        </p>
-        
-        <!-- Quick Search Grid -->
-        <div class="space-y-4 sm:space-y-5">
-          <p class="text-sm sm:text-base text-gray-500 font-medium uppercase tracking-wide">Popular Searches</p>
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 max-w-3xl mx-auto">
-            <% search_suggestions.each do |phrase| %>
-              <%= link_to search_path(query: phrase), 
-                  class: "group px-4 sm:px-5 py-3 sm:py-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg sm:rounded-xl text-sm sm:text-base lg:text-lg font-medium text-gray-700 hover:from-blue-100 hover:to-purple-100 hover:shadow-lg transition-all transform hover:scale-105",
-                  data: { turbo: false } do %>
-                <span class="group-hover:text-purple-600"><%= phrase %></span>
-              <% end %>
-            <% end %>
-          </div>
-        </div>
-        
-        <!-- Features -->
-        <div class="mt-8 sm:mt-12 flex justify-center gap-4 sm:gap-8 lg:gap-12 text-center">
-          <div class="p-2 sm:p-4">
-            <div class="text-3xl sm:text-4xl mb-2 sm:mb-3">⚡</div>
-            <p class="text-xs sm:text-sm lg:text-base text-gray-600">Fast Search</p>
-          </div>
-          <div class="p-2 sm:p-4">
-            <div class="text-3xl sm:text-4xl mb-2 sm:mb-3">📝</div>
-            <p class="text-xs sm:text-sm lg:text-base text-gray-600">Full Transcripts</p>
-          </div>
-          <div class="p-2 sm:p-4">
-            <div class="text-3xl sm:text-4xl mb-2 sm:mb-3">🎯</div>
-            <p class="text-xs sm:text-sm lg:text-base text-gray-600">Exact Matches</p>
-          </div>
-        </div>
-      </div>
-    </div>
   <% end %>
-  <% end %>
-</div>
+</main>
 
-<!-- Footer -->
-<footer class="mt-12 pb-8">
-  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm text-gray-600">
-    <p>Built with love to help children communicate through Little Bear 🐻</p>
-  </div>
-</footer>
-
-
+<%= render "shared/footer" %>

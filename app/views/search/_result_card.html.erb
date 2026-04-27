@@ -1,51 +1,69 @@
-<div class="relative">
-  <%= link_to episode_path(result[:episode].episode_id, segment: result[:match].position), 
-      class: "block px-3 sm:px-4 py-4 hover:bg-gray-50 border-b border-gray-100 last:border-b-0 transition-all duration-200 ease-in-out hover:translate-x-1 cursor-pointer group",
+<li class="border-b border-paper-edge/60 last:border-b-0">
+  <%= link_to episode_path(result[:episode].episode_id, segment: result[:match].position),
+      class: "block py-7 sm:py-8 group hover:bg-paper-deep/30 transition-colors -mx-3 sm:-mx-5 px-3 sm:px-5 rounded-md",
       data: { turbo_frame: "_top" } do %>
-    <div class="flex items-start gap-3">
-      <div class="flex-1 space-y-1">
-        <% result[:context_segments].each do |segment| %>
-          <% is_match = segment.id == result[:match].id %>
-          <% if is_match %>
-            <div class="border-l-4 border-blue-500 pl-3 py-1 bg-blue-50 relative">
-              <p class="text-gray-900 font-medium pr-8">
+    <div class="grid grid-cols-12 gap-x-4 sm:gap-x-6">
+
+      <%# ── LEFT MARGIN: timestamp ── %>
+      <div class="col-span-2 sm:col-span-1 pt-1">
+        <span class="marginalia">
+          <%= format_timestamp(result[:match].timestamp_from) %>
+        </span>
+      </div>
+
+      <%# ── PASSAGE ── %>
+      <div class="col-span-10 sm:col-span-10">
+        <div class="space-y-1.5">
+          <% result[:context_segments].each do |segment| %>
+            <% is_match = segment.id == result[:match].id %>
+            <% if is_match %>
+              <p class="font-display text-xl sm:text-2xl leading-snug text-ink">
                 <%= highlight_matches(segment.text, @query) %>
               </p>
-              <!-- Favorite button for the match segment -->
-              <div class="absolute top-1 right-1">
-                <% if segment.favorited? %>
-                  <%= form_with url: favorite_segment_path(segment.id), method: :delete, local: true, class: "inline-block" do |form| %>
-                    <%= form.hidden_field :transcript_segment_id, value: segment.id %>
-                    <%= form.button type: :submit, onclick: "event.preventDefault(); event.stopPropagation(); this.closest('form').submit();", class: "p-1 rounded-full hover:bg-white/50 transition-colors" do %>
-                      <svg class="w-4 h-4 text-red-500 hover:text-red-600" fill="currentColor" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-                      </svg>
-                    <% end %>
-                  <% end %>
-                <% else %>
-                  <%= form_with url: favorite_segments_path, method: :post, local: true, class: "inline-block" do |form| %>
-                    <%= form.hidden_field :transcript_segment_id, value: segment.id %>
-                    <%= form.button type: :submit, onclick: "event.preventDefault(); event.stopPropagation(); this.closest('form').submit();", class: "p-1 rounded-full hover:bg-white/50 transition-colors" do %>
-                      <svg class="w-4 h-4 text-gray-400 hover:text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-                      </svg>
-                    <% end %>
-                  <% end %>
-                <% end %>
-              </div>
-            </div>
-          <% else %>
-            <div class="pl-3 border-l-2 border-gray-200">
-              <p class="text-gray-600 text-sm leading-relaxed">
+            <% else %>
+              <p class="font-body-italic text-base sm:text-lg leading-relaxed text-ink-faint">
                 <%= segment.text %>
               </p>
-            </div>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+
+      <%# ── RIGHT MARGIN: favorite + arrow ── %>
+      <div class="col-span-12 sm:col-span-1 flex sm:flex-col items-center sm:items-end justify-between sm:justify-start gap-2 pt-2 sm:pt-1">
+        <% segment = result[:match] %>
+        <% if segment.favorited? %>
+          <%= form_with url: favorite_segment_path(segment.id), method: :delete, local: true, class: "inline-block" do |form| %>
+            <%= form.hidden_field :transcript_segment_id, value: segment.id %>
+            <%= form.button type: :submit,
+                onclick: "event.preventDefault(); event.stopPropagation(); this.closest('form').submit();",
+                class: "p-1.5 rounded-full hover:bg-paper-deep transition-colors text-vermilion",
+                title: "Remove from favorites" do %>
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 20.5s-7.5-4.6-9.3-9.3C1.5 7.7 4 4.5 7.4 4.5c1.9 0 3.6 1 4.6 2.6 1-1.6 2.7-2.6 4.6-2.6 3.4 0 5.9 3.2 4.7 6.7C19.5 15.9 12 20.5 12 20.5z"/>
+              </svg>
+            <% end %>
+          <% end %>
+        <% else %>
+          <%= form_with url: favorite_segments_path, method: :post, local: true, class: "inline-block" do |form| %>
+            <%= form.hidden_field :transcript_segment_id, value: segment.id %>
+            <%= form.button type: :submit,
+                onclick: "event.preventDefault(); event.stopPropagation(); this.closest('form').submit();",
+                class: "p-1.5 rounded-full text-ink-faint hover:text-vermilion transition-colors",
+                title: "Save to favorites" do %>
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 20.5s-7.5-4.6-9.3-9.3C1.5 7.7 4 4.5 7.4 4.5c1.9 0 3.6 1 4.6 2.6 1-1.6 2.7-2.6 4.6-2.6 3.4 0 5.9 3.2 4.7 6.7C19.5 15.9 12 20.5 12 20.5z"/>
+              </svg>
+            <% end %>
           <% end %>
         <% end %>
+
+        <span class="text-ink-faint group-hover:text-vermilion group-hover:translate-x-1 transition-all" aria-hidden="true">
+          <svg class="w-4 h-4" viewBox="0 0 12 12" fill="none">
+            <path d="M2 6 H 10 M 7 3 L 10 6 L 7 9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
       </div>
-      <span class="text-sm font-mono text-gray-500 bg-gray-100 px-2 py-1 rounded shrink-0">
-        <%= format_timestamp(result[:match].timestamp_from) %>
-      </span>
     </div>
   <% end %>
-</div>
+</li>

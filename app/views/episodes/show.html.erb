@@ -1,13 +1,11 @@
-<% content_for :title, "#{@episode.display_name} Full Transcript | Little Bear Episodes" %>
-<% content_for :description, "Read the complete transcript for Little Bear episode #{@episode.display_name}. Search through dialogue and find your favorite moments from this classic children's show." %>
+<% content_for :title, "#{@episode.display_name} — Full Transcript | FindThePhrase" %>
+<% content_for :description, "The complete transcript for Little Bear episode #{@episode.display_name}, indexed and quietly typeset for parents and readers." %>
 <% content_for :head do %>
-  <meta property="og:title" content="<%= @episode.display_name %> Full Transcript | Little Bear Episodes">
-  <meta property="og:description" content="Read the complete transcript for Little Bear episode <%= @episode.display_name %>. Search through dialogue and find your favorite moments from this classic children's show.">
+  <meta property="og:title" content="<%= @episode.display_name %> — Little Bear">
+  <meta property="og:description" content="The complete transcript for Little Bear episode <%= @episode.display_name %>.">
   <meta property="og:type" content="article">
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="<%= @episode.display_name %> Full Transcript | Little Bear Episodes">
-  <meta name="twitter:description" content="Read the complete transcript for Little Bear episode <%= @episode.display_name %>. Search through dialogue and find your favorite moments from this classic children's show.">
-  
+
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -15,120 +13,102 @@
     "name": "<%= @episode.display_name %>",
     "episodeNumber": "<%= @episode.episode_number %>",
     "seasonNumber": "<%= @episode.season %>",
-    "partOfSeries": {
-      "@type": "TVSeries",
-      "name": "Little Bear"
-    },
+    "partOfSeries": { "@type": "TVSeries", "name": "Little Bear" },
     "transcript": "<%= @transcript_segments.map(&:text).join(' ') %>"
   }
   </script>
 <% end %>
 
-<!-- Header -->
-<header class="bg-white shadow-sm border-b border-gray-100">
-  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4">
-    <div class="flex items-center justify-between">
-      <%= link_to root_path, class: "flex items-center space-x-2 sm:space-x-3 hover:opacity-80 transition-opacity" do %>
-        <div class="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-          <svg class="w-4 h-4 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
-          </svg>
-        </div>
-        <h1 class="text-xl sm:text-2xl font-bold text-gray-900">FindThePhrase</h1>
-      <% end %>
-      <div class="hidden sm:block text-xs sm:text-sm text-gray-500">
-        Little Bear Transcript Search
-      </div>
-    </div>
-  </div>
-</header>
+<%= render "shared/header", subtitle: "Reading room" %>
 
-<!-- Main Content -->
-<main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
-  <!-- Breadcrumb -->
-  <nav class="mb-6">
-    <div class="flex items-center space-x-2 text-sm">
-      <%= link_to "Search", root_path, class: "text-blue-600 hover:text-blue-800 transition-colors" %>
-      <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+<main class="max-w-5xl mx-auto px-5 sm:px-8 lg:px-12">
+
+  <%# Breadcrumb — folio mark %>
+  <nav class="pt-8 pb-4">
+    <%= link_to root_path, class: "inline-flex items-center gap-2 font-mono text-[11px] tracking-[0.22em] uppercase text-ink-faint hover:text-vermilion transition-colors" do %>
+      <svg class="w-3 h-3" viewBox="0 0 12 12" fill="none">
+        <path d="M10 6 H 2 M 5 3 L 2 6 L 5 9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
-      <span class="text-gray-600 font-medium"><%= @episode.display_name %> Transcript</span>
-    </div>
+      Back to the index
+    <% end %>
   </nav>
 
-  <!-- Episode Header -->
-  <div class="bg-white rounded-xl shadow-md overflow-hidden mb-8">
-    <div class="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-4">
-      <div class="flex items-center justify-between">
-        <div>
-          <h1 class="text-2xl font-bold"><%= @episode.display_name %></h1>
-          <p class="text-blue-100 mt-1">Full Episode Transcript</p>
+  <%# Chapter title page %>
+  <header class="pt-6 pb-12">
+    <p class="ink-rise font-mono text-[11px] tracking-[0.22em] uppercase text-vermilion mb-3">
+      Season <%= @episode.season %> &nbsp;·&nbsp; Episode <%= @episode.episode_number %>
+    </p>
+    <h1 class="ink-rise ink-rise-delay-1 font-display text-5xl sm:text-7xl text-ink leading-[0.95] tracking-[-0.03em]">
+      <%= @episode.display_name %>
+    </h1>
+    <p class="ink-rise ink-rise-delay-2 mt-5 font-body-italic text-lg text-ink-soft">
+      <%= pluralize(@transcript_segments.count, 'line') %> of dialogue, transcribed in order.
+    </p>
+
+    <%# Hand-drawn ornament under chapter heading %>
+    <svg width="120" height="18" viewBox="0 0 120 18" fill="none" class="mt-8 ink-rise ink-rise-delay-3" aria-hidden="true">
+      <path d="M2 9 Q 20 1, 40 9 T 80 9 T 118 9" stroke="#c84b31" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+      <circle cx="60" cy="9" r="2" fill="#c84b31"/>
+    </svg>
+  </header>
+
+  <%# Transcript reading column %>
+  <article class="pb-16"<% if @target_segment_id %> data-controller="scroll-to-segment" data-scroll-to-segment-segment-id-value="<%= @target_segment_id %>"<% end %>>
+    <% @transcript_segments.each_with_index do |segment, idx| %>
+      <% is_target = @target_segment_id && @target_segment_id.to_i == segment.position %>
+      <div id="segment-<%= segment.position %>"
+           class="grid grid-cols-12 gap-x-4 sm:gap-x-8 py-2 group <%= 'bg-honey-soft/40 -mx-3 px-3 sm:-mx-6 sm:px-6 rounded-md' if is_target %>">
+        <%# Marginalia: timestamp every ~5 segments or on target %>
+        <div class="col-span-2 sm:col-span-2 pt-2">
+          <% if idx == 0 || idx % 5 == 0 || is_target %>
+            <span class="marginalia"><%= format_timestamp(segment.timestamp_from) %></span>
+          <% end %>
         </div>
-        <div class="text-right">
-          <div class="bg-white/20 px-3 py-1 rounded-full text-sm">
-            <%= @transcript_segments.count %> segments
-          </div>
+
+        <div class="col-span-10 sm:col-span-9">
+          <p class="<%= idx == 0 ? 'drop-cap' : '' %> font-display-text text-[1.18rem] sm:text-[1.32rem] leading-relaxed text-ink">
+            <%= segment.text %>
+          </p>
+        </div>
+
+        <%# Right margin: small favorite affordance on hover %>
+        <div class="col-span-12 sm:col-span-1 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity flex sm:justify-end pt-2">
+          <% if segment.favorited? %>
+            <%= form_with url: favorite_segment_path(segment.id), method: :delete, local: true, class: "inline-block" do |form| %>
+              <%= form.button type: :submit, class: "p-1 text-vermilion", title: "Remove favorite" do %>
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 20.5s-7.5-4.6-9.3-9.3C1.5 7.7 4 4.5 7.4 4.5c1.9 0 3.6 1 4.6 2.6 1-1.6 2.7-2.6 4.6-2.6 3.4 0 5.9 3.2 4.7 6.7C19.5 15.9 12 20.5 12 20.5z"/>
+                </svg>
+              <% end %>
+            <% end %>
+          <% else %>
+            <%= form_with url: favorite_segments_path, method: :post, local: true, class: "inline-block" do |form| %>
+              <%= form.hidden_field :transcript_segment_id, value: segment.id %>
+              <%= form.button type: :submit, class: "p-1 text-ink-faint hover:text-vermilion transition-colors", title: "Save line" do %>
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 20.5s-7.5-4.6-9.3-9.3C1.5 7.7 4 4.5 7.4 4.5c1.9 0 3.6 1 4.6 2.6 1-1.6 2.7-2.6 4.6-2.6 3.4 0 5.9 3.2 4.7 6.7C19.5 15.9 12 20.5 12 20.5z"/>
+                </svg>
+              <% end %>
+            <% end %>
+          <% end %>
         </div>
       </div>
-    </div>
-  </div>
+    <% end %>
+  </article>
 
-  <!-- Transcript Content -->
-  <div class="bg-white rounded-xl shadow-md overflow-hidden"<% if @target_segment_id %> data-controller="scroll-to-segment" data-scroll-to-segment-segment-id-value="<%= @target_segment_id %>"<% end %>>
-    <div class="divide-y divide-gray-100">
-      <% @transcript_segments.each do |segment| %>
-        <div id="segment-<%= segment.position %>" class="<%= 'bg-yellow-50 border-l-4 border-yellow-400' if @target_segment_id && @target_segment_id.to_i == segment.position %> px-6 py-4 hover:bg-gray-50 transition-colors">
-          <div class="flex items-start gap-3">
-            <div class="flex-1">
-              <p class="text-gray-900 leading-relaxed text-base">
-                <%= segment.text %>
-              </p>
-            </div>
-            <span class="text-sm font-mono text-gray-500 bg-gray-100 px-3 py-1 rounded-full shrink-0">
-              <%= format_timestamp(segment.timestamp_from) %>
-            </span>
-          </div>
-        </div>
-      <% end %>
-    </div>
-  </div>
-
-  <!-- Back to Search -->
-  <div class="mt-8 text-center">
-    <%= link_to root_path, class: "inline-flex items-center px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors" do %>
-      <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+  <%# End-of-chapter ornament %>
+  <div class="flex flex-col items-center pb-16">
+    <svg width="180" height="20" viewBox="0 0 180 20" fill="none" aria-hidden="true">
+      <path d="M2 10 Q 30 2, 60 10 T 118 10 T 178 10" stroke="#c84b31" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+      <circle cx="90" cy="10" r="2.5" fill="#c84b31"/>
+    </svg>
+    <%= link_to root_path, class: "mt-8 inline-flex items-center gap-2 px-6 py-3 bg-ink text-paper hover:bg-vermilion-deep font-display-text text-sm tracking-wide rounded-full transition-colors" do %>
+      <svg class="w-3.5 h-3.5" viewBox="0 0 12 12" fill="none">
+        <path d="M10 6 H 2 M 5 3 L 2 6 L 5 9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
-      Back to Search
+      Return to the index
     <% end %>
   </div>
 </main>
 
-<!-- Footer -->
-<footer class="mt-12 pb-8">
-  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm text-gray-600">
-    <p>Built with love to help children communicate through Little Bear 🐻</p>
-  </div>
-</footer>
-
-
-<style>
-  /* Custom scrollbar */
-  ::-webkit-scrollbar {
-    width: 8px;
-  }
-  
-  ::-webkit-scrollbar-track {
-    background: #f1f5f9;
-    border-radius: 4px;
-  }
-  
-  ::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
-    border-radius: 4px;
-  }
-  
-  ::-webkit-scrollbar-thumb:hover {
-    background: #94a3b8;
-  }
-</style>
+<%= render "shared/footer" %>
