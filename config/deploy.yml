@@ -1,14 +1,17 @@
-service: FindPhrase
+service: find-phrase
 
 image: jibrankalia/find-phrase
 
 servers:
   web:
-    - 5.78.67.11
-  # job:
-  #   hosts:
-  #     - 192.168.0.1
-  #   cmd: bin/jobs
+    hosts:
+      - 5.78.67.11
+    env:
+      clear:
+        SOLID_QUEUE_IN_PUMA: true
+    options:
+      memory: 1g
+      cpus: "1.0"
 
 proxy:
   ssl: true
@@ -25,11 +28,17 @@ env:
     - RAILS_MASTER_KEY
     - POSTGRES_PASSWORD
   clear:
-    SOLID_QUEUE_IN_PUMA: true
-    DB_HOST: FindPhrase-postgres
+    DB_HOST: find-phrase-postgres
     WEB_CONCURRENCY: 2
+    RUBY_YJIT_ENABLE: 1
     RAILS_LOG_LEVEL: info
     RAILS_SERVE_STATIC_FILES: true
+
+aliases:
+  console: app exec --interactive --reuse "bin/rails console"
+  shell: app exec --interactive --reuse "bash"
+  logs: app logs -f
+  dbc: app exec --interactive --reuse "bin/rails dbconsole"
 
 volumes:
   - "/mnt/HC_Volume_103056667/find-phrase-storage:/rails/storage"
@@ -38,7 +47,7 @@ asset_path: /rails/public/assets
 
 builder:
   arch: amd64
-  remote: ssh://app@5.78.67.11
+  remote: ssh://root@5.78.67.11
 
   args:
     RUBY_VERSION: 3.3.8
@@ -50,7 +59,7 @@ accessories:
   postgres:
     image: postgres:17
     host: 5.78.67.11
-    port: 5433:5432
+    port: "127.0.0.1:5433:5432"
     env:
       secret:
         - POSTGRES_PASSWORD
@@ -59,6 +68,9 @@ accessories:
         POSTGRES_DB: find_phrase_production
     volumes:
       - /mnt/HC_Volume_103056667/find-phrase-postgres-data:/var/lib/postgresql/data
+    options:
+      memory: 512m
+      cpus: "0.5"
 
 ssh:
   user: app
