@@ -36,9 +36,9 @@
   <%# Chapter title page %>
   <header class="pt-6 pb-12">
     <p class="ink-rise font-mono text-[11px] tracking-[0.22em] uppercase text-vermilion mb-3">
-      Season <%= @episode.season %> &nbsp;·&nbsp; Episode <%= @episode.episode_number %>
+      Season <%= @episode.season %> &nbsp;·&nbsp; Episode <%= @episode.episode_number %> &nbsp;·&nbsp; <%= @episode.episode_id %>
     </p>
-    <h1 class="ink-rise ink-rise-delay-1 font-display text-5xl sm:text-7xl text-ink leading-[0.95] tracking-[-0.03em]">
+    <h1 class="ink-rise ink-rise-delay-1 font-display text-4xl sm:text-6xl text-ink leading-[1.05] tracking-[-0.02em]">
       <%= @episode.display_name %>
     </h1>
     <p class="ink-rise ink-rise-delay-2 mt-5 font-body-italic text-lg text-ink-soft">

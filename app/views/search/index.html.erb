@@ -92,14 +92,16 @@
           <% @grouped_results.each_with_index do |(episode, results), idx| %>
             <article>
               <%# Chapter header — folio style %>
-              <header class="flex items-end justify-between border-b border-ink/30 pb-3 mb-1">
-                <div class="flex items-baseline gap-4">
-                  <span class="font-mono text-xs text-ink-faint tracking-[0.18em] uppercase">Ch. <%= sprintf("%02d", idx + 1) %></span>
-                  <h2 class="font-display text-3xl sm:text-4xl text-ink leading-none">
+              <header class="flex items-end justify-between gap-4 border-b border-ink/30 pb-3 mb-1">
+                <div class="flex items-baseline gap-4 flex-wrap min-w-0">
+                  <span class="font-mono text-xs text-ink-faint tracking-[0.18em] uppercase whitespace-nowrap">
+                    Ch. <%= sprintf("%02d", idx + 1) %> &nbsp;·&nbsp; <%= episode.episode_id %>
+                  </span>
+                  <h2 class="font-display text-2xl sm:text-3xl text-ink leading-tight">
                     <%= episode.display_name %>
                   </h2>
                 </div>
-                <span class="font-mono text-xs text-ink-faint hidden sm:inline">
+                <span class="font-mono text-xs text-ink-faint hidden sm:inline whitespace-nowrap">
                   <%= results.count %> <%= results.count == 1 ? 'match' : 'matches' %>
                 </span>
               </header>

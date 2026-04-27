@@ -42,17 +42,17 @@
     <div class="space-y-14 pb-16">
       <% @grouped_favorites.each_with_index do |(episode, favorites), idx| %>
         <article>
-          <header class="flex items-end justify-between border-b border-ink/30 pb-3">
-            <div class="flex items-baseline gap-4">
-              <span class="font-mono text-xs text-ink-faint tracking-[0.18em] uppercase">
-                Folio <%= sprintf("%02d", idx + 1) %>
+          <header class="flex items-end justify-between gap-4 border-b border-ink/30 pb-3">
+            <div class="flex items-baseline gap-4 flex-wrap min-w-0">
+              <span class="font-mono text-xs text-ink-faint tracking-[0.18em] uppercase whitespace-nowrap">
+                Folio <%= sprintf("%02d", idx + 1) %> &nbsp;·&nbsp; <%= episode.episode_id %>
               </span>
               <%= link_to episode_path(episode.episode_id),
-                  class: "font-display text-3xl sm:text-4xl text-ink hover:text-vermilion transition-colors leading-none" do %>
+                  class: "font-display text-2xl sm:text-3xl text-ink hover:text-vermilion transition-colors leading-tight" do %>
                 <%= episode.display_name %>
               <% end %>
             </div>
-            <span class="font-mono text-xs text-ink-faint hidden sm:inline">
+            <span class="font-mono text-xs text-ink-faint hidden sm:inline whitespace-nowrap">
               <%= pluralize(favorites.count, 'line') %>
             </span>
           </header>

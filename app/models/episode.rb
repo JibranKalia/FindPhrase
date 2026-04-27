@@ -5,6 +5,6 @@ class Episode < ApplicationRecord
   validates :season, :episode_number, presence: true
 
   def display_name
-    episode_id
+    name.presence || episode_id
   end
 end
